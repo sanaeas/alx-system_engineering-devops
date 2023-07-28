@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Create the file /var/run/myscript.pid
+# Display To infinity and beyond indefinitely
+# Displays I hate the kill command when receiving a SIGTERM signal
+# Display Y U no love me?! when receiving a SIGINT signal
+echo "$$" > /var/run/myscript.pid
+
+terminator() {
+    echo "I hate the kill command"
+    rm -f /var/run/myscript.pid
+    exit
+}
+
+interruptor() {
+    echo "Y U no love me?!"
+}
+
+trap terminator SIGTERM SIGQUIT
+trap interruptor SIGINT
+
+while true; do
+    echo "To infinity and beyond"
+    sleep 2
+done
