@@ -1,0 +1,4 @@
+# SSH client configuration
+Host 18.233.65.249
+    IdentityFile ~/.ssh/school
+    PasswordAuthentication no
