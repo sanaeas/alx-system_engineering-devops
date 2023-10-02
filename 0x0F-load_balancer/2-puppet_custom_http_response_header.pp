@@ -12,9 +12,7 @@ exec {'install_nginx':
 }
 
 exec { 'add_header':
-  command  => 'sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"${::hostname}\";/" /etc/nginx/nginx.conf',
-  provider => shell,
-  before   => Exec['nginx_restart'],
+  command => '/bin/sed -i "/^\tlocation \/ {.*/a \\\t \tadd_header X-Served-By \$hostname;" /etc/nginx/sites-available/default; /usr/sbin/service nginx restart'
 }
 
 exec { 'nginx_restart':
