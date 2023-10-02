@@ -1,7 +1,7 @@
 # Automate the task of creating a custom HTTP header response
 exec { 'apt-update':
   command => 'apt-get update',
-  path    => '/usr/bin',
+  path    => '/usr/bin:/bin',
 }
 
 package { 'nginx':
@@ -14,14 +14,16 @@ service { 'nginx':
   require => Package['nginx'],
 }
 
-file { '/etc/nginx/sites-available/default':
-  ensure => 'present',
+file_line { 'add_header':
   path   => '/etc/nginx/sites-available/default',
-  match  => 'listen 80 default_server',
-  line   => '\n\tadd_header X-Served-By "${::hostname}";',
+  after  => "^\tlocation / {",
+  line   => "\n\tadd_header X-Served-By \"${::hostname}\";",
+  notify => Exec['nginx_reload'],
 }
 
 exec { 'nginx_reload':
-  command  => 'sudo service nginx restart',
-  provider => shell,
+  command     => 'service nginx restart',
+  path        => '/usr/sbin',
+  refreshonly => true,
+  subscribe   => File_line['add_header'],
 }
