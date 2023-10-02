@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Install and configure HAproxy on a server
+# Distrubte traffic between web-01 and web-02 using roundrobin algorithm
+sudo apt-get update
+sudo apt-get install -y haproxy
+
+echo "ENABLED=1" > /etc/default/haproxy
+
+echo "
+frontend http-in
+    bind *:80
+    default_backend servers
+
+backend servers
+    balance roundrobin
+    server web-01 18.233.65.249:80 check
+    server web-02 100.26.9.198:80 check
+" >> /etc/haproxy/haproxy.cfg
+
+sudo service haproxy restart
