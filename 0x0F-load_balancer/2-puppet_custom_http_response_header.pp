@@ -14,16 +14,13 @@ service { 'nginx':
   require => Package['nginx'],
 }
 
-file_line { 'add_header':
-  path   => '/etc/nginx/sites-available/default',
-  after  => "^\tlocation / {",
-  line   => "\n\tadd_header X-Served-By \"${::hostname}\";",
-  notify => Exec['nginx_reload'],
+exec { 'add_header':
+  provider => shell,
+  command  => 'sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"${::hostname}\";/" /etc/nginx/nginx.conf',
+  before   => Exec['nginx_restart'],
 }
 
-exec { 'nginx_reload':
-  command     => 'service nginx restart',
-  path        => '/usr/sbin',
-  refreshonly => true,
-  subscribe   => File_line['add_header'],
+exec { 'nginx_restart':
+  command => 'service nginx restart',
+  path    => '/usr/sbin',
 }
