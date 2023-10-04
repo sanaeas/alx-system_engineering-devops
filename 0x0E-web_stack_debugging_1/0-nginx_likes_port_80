@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# A Bash script that configures a server to listen on port 80
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+service nginx restart
