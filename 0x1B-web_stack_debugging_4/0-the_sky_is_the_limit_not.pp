@@ -1,10 +1,10 @@
 # Fix the issue with failed requests
-# Increase worker processes in nginx.conf
-exec { 'increase_worker_processes':
-  command => '/bin/sed -i "s/worker_processes 4/worker_processes 8/g" /etc/nginx/nginx.conf',
-  notify  => Service['nginx'],
+exec { 'fix-failed-requests':
+    command => 'sed -i "s/15/50000/" /etc/default/nginx',
+    path    => '/usr/local/bin/:/bin/'
 }
 
-service { 'nginx':
-  ensure => 'running',
+exec { 'restart':
+    command => 'nginx restart',
+    path    => '/etc/init.d/'
 }
